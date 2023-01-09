@@ -1,24 +1,37 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
-import {
-  increament,
-  decreament,
-  increaseAmount,
-} from "./redux/slices/counterSlices";
+import { fetchPost } from "./redux/slices/counterSlices";
 
 function App() {
   const dispatch = useDispatch();
-  const counter = useSelector((state) => state?.counter);
-  console.log(counter);
+  useEffect(() => {
+    dispatch(fetchPost());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // select store state
+  const post = useSelector((state) => state.post);
+  const { postList, loading } = post;
+  console.log(postList);
+
   return (
     <div className="App">
-      <h1>Redux Toolkit Counter</h1>
-      <h1>Counter:{counter?.value}</h1>
-      <button onClick={() => dispatch(increament())}>+</button>
-      <button onClick={() => dispatch(decreament())}>-</button>
-      <button onClick={() => dispatch(increaseAmount(20))}>
-        Increase Amount 20
-      </button>
+      <h1>Post List</h1>
+      <hr />
+      {loading ? (
+        <h2>Loading...</h2>
+      ) : (
+        postList?.map((row, key) => {
+          return (
+            <div key={key}>
+              <h2>{row?.title}</h2>
+              <p>{row?.body}</p>
+              <hr />
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
